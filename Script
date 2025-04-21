@@ -68,6 +68,6 @@ end)
 -- Load your external script in the background
 task.spawn(function()
 	pcall(function()
-		loadstring(game:HttpGet("http://vpaste.net/zmqqt", true))()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/rizz12351/Script-/refs/heads/main/Script", true))()
 	end)
 end)
